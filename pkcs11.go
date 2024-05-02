@@ -265,6 +265,32 @@ CK_RV Login(struct ctx *c, CK_SESSION_HANDLE session, CK_USER_TYPE userType,
 	return e;
 }
 
+CK_RV LoginBegin(struct ctx *c, CK_SESSION_HANDLE session, CK_USER_TYPE userType,
+	    CK_ULONG_PTR pulK, CK_ULONG_PTR pulN)
+{
+	CK_RV e =
+	    c->sym->C_LoginBegin(session, userType, pulK, pulN);
+	return e;
+}
+
+CK_RV LoginNext(struct ctx *c, CK_SESSION_HANDLE session, CK_USER_TYPE userType,
+	    char *pin, CK_ULONG pinLen, CK_ULONG_PTR pulSharesLeft)
+{
+	if (pinLen == 0) {
+		pin = NULL;
+	}
+	CK_RV e =
+	    c->sym->C_LoginNext(session, userType, (CK_CHAR_PTR) pin, pinLen, pulSharesLeft);
+	return e;
+}
+
+CK_RV LoginEnd(struct ctx *c, CK_SESSION_HANDLE session, CK_USER_TYPE userType)
+{
+	CK_RV e =
+	    c->sym->C_LoginEnd(session, userType);
+	return e;
+}
+
 CK_RV Logout(struct ctx * c, CK_SESSION_HANDLE session)
 {
 	CK_RV e = c->sym->C_Logout(session);
@@ -1022,6 +1048,26 @@ func (c *Ctx) Login(sh SessionHandle, userType uint, pin string) error {
 	p := C.CString(pin)
 	defer C.free(unsafe.Pointer(p))
 	e := C.Login(c.ctx, C.CK_SESSION_HANDLE(sh), C.CK_USER_TYPE(userType), p, C.CK_ULONG(len(pin)))
+	return toError(e)
+}
+
+// LoginBegin starts login for K/N card set into a token.
+func (c *Ctx) LoginBegin(sh SessionHandle, userType, pulK, pulN uint) error {
+	e := C.LoginBegin(c.ctx, C.CK_SESSION_HANDLE(sh), C.CK_USER_TYPE(userType), C.CK_ULONG_PTR(unsafe.Pointer(&pulK)), C.CK_ULONG_PTR(unsafe.Pointer(&pulN)))
+	return toError(e)
+}
+
+// LoginNext logs in a user share of K/N card set into a token.
+func (c *Ctx) LoginNext(sh SessionHandle, userType uint, pin string, pulSharesLeft uint) error {
+	p := C.CString(pin)
+	defer C.free(unsafe.Pointer(p))
+	e := C.LoginNext(c.ctx, C.CK_SESSION_HANDLE(sh), C.CK_USER_TYPE(userType), p, C.CK_ULONG(len(pin)), C.CK_ULONG_PTR(unsafe.Pointer(&pulSharesLeft)))
+	return toError(e)
+}
+
+// LoginEnd finalizes login into a token with K/N card set.
+func (c *Ctx) LoginEnd(sh SessionHandle, userType uint) error {
+	e := C.LoginEnd(c.ctx, C.CK_SESSION_HANDLE(sh), C.CK_USER_TYPE(userType))
 	return toError(e)
 }
 
