@@ -1,6 +1,6 @@
-// Package p11 wraps `miekg/pkcs11` to make it easier to use and more idiomatic
+// Package p11 wraps `phlipse/pkcs11` to make it easier to use and more idiomatic
 // to Go, as compared with the more straightforward C wrapper that
-// `miekg/pkcs11` presents. All types are safe to use concurrently.
+// `phlipse/pkcs11` presents. All types are safe to use concurrently.
 //
 // To use, first you open a module (a dynamically loaded library) by providing
 // its path on your filesystem. This module is typically provided by
@@ -34,35 +34,35 @@
 //
 // To summarize, a typical workflow might look like:
 //
-//   module, err := p11.OpenModule("/path/to/module.so")
-//   if err != nil {
-//     return err
-//   }
-//   slots, err := module.Slots()
-//   if err != nil {
-//     return err
-//   }
-//   // ... find the appropriate slot, then ...
-//   session, err := slots[0].OpenSession()
-//   if err != nil {
-//     return err
-//   }
-//   privateKeyObject, err := session.FindObject(...)
-//   if err != nil {
-//     return err
-//   }
-//   privateKey := p11.PrivateKey(privateKeyObject)
-//   signature, err := privateKey.Sign(..., []byte{"hello"})
-//   if err != nil {
-//     return err
-//   }
+//	module, err := p11.OpenModule("/path/to/module.so")
+//	if err != nil {
+//	  return err
+//	}
+//	slots, err := module.Slots()
+//	if err != nil {
+//	  return err
+//	}
+//	// ... find the appropriate slot, then ...
+//	session, err := slots[0].OpenSession()
+//	if err != nil {
+//	  return err
+//	}
+//	privateKeyObject, err := session.FindObject(...)
+//	if err != nil {
+//	  return err
+//	}
+//	privateKey := p11.PrivateKey(privateKeyObject)
+//	signature, err := privateKey.Sign(..., []byte{"hello"})
+//	if err != nil {
+//	  return err
+//	}
 package p11
 
 import (
 	"fmt"
 	"sync"
 
-	"github.com/miekg/pkcs11"
+	"github.com/phlipse/pkcs11"
 )
 
 var modules = make(map[string]Module)
