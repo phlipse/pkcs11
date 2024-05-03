@@ -266,10 +266,10 @@ CK_RV Login(struct ctx *c, CK_SESSION_HANDLE session, CK_USER_TYPE userType,
 }
 
 CK_RV LoginBegin(struct ctx *c, CK_SESSION_HANDLE session, CK_USER_TYPE userType,
-	    CK_ULONG_PTR pulK, CK_ULONG_PTR pulN)
+	    CK_ULONG pulK, CK_ULONG pulN)
 {
 	CK_RV e =
-	    c->sym->C_LoginBegin(session, userType, pulK, pulN);
+	    c->sym->C_LoginBegin(session, userType, &pulK, &pulN);
 	return e;
 }
 
@@ -1053,7 +1053,7 @@ func (c *Ctx) Login(sh SessionHandle, userType uint, pin string) error {
 
 // LoginBegin starts login for K/N card set into a token.
 func (c *Ctx) LoginBegin(sh SessionHandle, userType, pulK, pulN uint) error {
-	e := C.LoginBegin(c.ctx, C.CK_SESSION_HANDLE(sh), C.CK_USER_TYPE(userType), C.CK_ULONG_PTR(unsafe.Pointer(&pulK)), C.CK_ULONG_PTR(unsafe.Pointer(&pulN)))
+	e := C.LoginBegin(c.ctx, C.CK_SESSION_HANDLE(sh), C.CK_USER_TYPE(userType), C.CK_ULONG(pulK), C.CK_ULONG_PTR(pulN))
 	return toError(e)
 }
 
