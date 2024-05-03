@@ -255,8 +255,8 @@ CK_PKCS11_FUNCTION_INFO(C_LoginBegin)
 (
   CK_SESSION_HANDLE hSession,   /* the session's handle */
   CK_USER_TYPE      userType,   /* the user type */
-  CK_ULONG          pulK,       /* cards required to load logical token*/
-  CK_ULONG          pulN        /* number of cards in set */
+  CK_ULONG_PTR      pulK,       /* cards required to load logical token*/
+  CK_ULONG_PTR      pulN        /* number of cards in set */
 );
 #endif
 
